@@ -1,0 +1,35 @@
+{% extends "_base.html" %}
+
+{% block title %}
+Sign Up
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form method="POST" action="">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" id="name" >
+        </div>
+        <div class="mb-3 d-flex justify-content-around">
+            <div class="w-100" style="padding-right: 1vw;">
+                <label for="emailID" class="form-label">Email ID</label>
+                <input type="email" name="emailID" class="form-control" id="emailID" >
+            </div>
+            <div class="w-100" style="padding-left: 1vw;">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" id="username" >
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="password">
+        </div>
+        <div class="mb-3">
+            <label for="c_password" class="form-label">Confirm Password</label>
+            <input type="password" name="c_password" class="form-control" id="c_password">
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Register</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends '_base.html' %}
+
+{% block title %}Rides{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h2>Add a Ride </h2>
+    <hr>
+    <form class="row g-3" method="post" action="">
+        <div class="col-md-6">
+            <label for="from_location" class="form-label">From</label>
+            <input type="text" class="form-control" id="from_location" name="from_location">
+        </div>
+        <div class="col-md-6">
+            <label for="to_location" class="form-label">To</label>
+            <input type="text" class="form-control" id="to_location" name="to_location">
+        </div>
+        <div class="col-12">
+            <label for="description" class="form-label">Description</label>
+            <textarea type="text" row=2 class="form-control" id="description" name="description"></textarea>
+        </div>
+        <div class="col-md-4">
+            <label for="distance" class="form-label">Distance</label>
+            <input type="number" class="form-control" id="distance" name="distance" placeholder="..... KMs">
+        </div>
+        <div class="col-md-4">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" class="form-control" id="date" name="date">
+        </div>
+        <div class="col-md-4">
+            <label for="mode_of_transport" class="form-label">Mode of Transport</label>
+            <select id="mode_of_transport" class="form-select" name="mode_of_transport">
+                <option selected>Choose...</option>
+                <option>On Foot</option>
+                <option>Cycle</option>
+                <option>Car</option>
+                <option>Bike</option>
+                <option>Bus</option>
+                <option>Train</option>
+                <option>Flight</option>
+            </select>
+        </div>
+        <hr>
+        <center>
+            <button type="submit" class="btn btn-primary w-50">Sign in</button>
+        </center>
+    </form>
+</div>
+
+{% if content.alert %}
+<script>
+    alert("Ride added successfully");
+</script>
+{% endif %}
+
+{% endblock %}
