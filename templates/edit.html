@@ -1,0 +1,66 @@
+{% extends "_base.html" %}
+
+{% block title %}
+Edit Data
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Edit Ride </h2>
+    <hr>
+
+    {% if context.alert %}
+    <div class="alert alert-danger" role="alert">
+        Couldnt find the record you are looking for
+    </div>
+    {% else %}
+    <form action="" method="POST">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="from_location" class="form-label">From</label>
+                <input type="text" class="form-control" id="from_location" name="from_location" value="{{ context.ride['from'] }}">
+            </div>
+            <div class="col-md-6">
+                <label for="to_location" class="form-label">To</label>
+                <input type="text" class="form-control" id="to_location" name="to_location" value="{{ context.ride['to'] }}">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="distance" class="form-label">Distance</label>
+                <input type="number" class="form-control" id="distance" name="distance"
+                    value="{{ context.ride['distance'] }}">
+            </div>
+            <div class="col-md-4">
+                <label for="mode_of_transport" class="form-label">Mode of Transport</label>
+                <select id="mode_of_transport" class="form-select" name="mode_of_transport" required>
+                    {% for obj in context.transport_modes %}
+                    <option value="{{ obj.mode }}" {% if obj.mode==context.ride.mode_of_transport %}selected{% endif %}>
+                        {{ obj.mode }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" name="date" value="{{ context.ride['date'] }}">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description"
+                    name="description">{{ context.ride['description'] }}</textarea>
+            </div>
+        </div>
+        <hr>
+        <center>
+            <button type="submit" class="btn btn-primary w-25">Update</button>
+        </center>
+        {% endif %}
+    </form>
+
+</div>
+{% endblock %}

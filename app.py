@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request, Response, 
 from flask_session import Session
 from flask_pymongo import PyMongo
 from flask_bcrypt import Bcrypt
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/roam_emo"
@@ -10,6 +11,14 @@ app.config["SESSION_TYPE"] = "filesystem"
 mongo = PyMongo(app)
 bcrypt = Bcrypt(app)
 Session(app)
+
+def available_mode_of_transport():
+    if 'transport_modes' in mongo.db.list_collection_names():
+        return
+    modes = ['On Foot','Bicycle','Car (As Passanger)','Car (Self Driven)', 'Bike (As Passanger)','Bike (Self Driven)', 'Bus', 'Train', 'Flight']
+    for mode in modes:
+        mongo.db.transport_modes.insert_one({'mode':mode})
+    return
 
 @app.route("/", methods=['GET'])
 def index():
@@ -59,15 +68,16 @@ def home():
     else:
         return redirect(url_for('login'))
 
-# @app.route("/history")
-# def history():
-#     return render_template('history.html')
-
 @app.route("/ride", methods=['GET','POST'])
 def ride():
+    if not session.get('username'):
+        return redirect(url_for('login'))
+    # get all the available modes of transport
+    transport_modes = mongo.db.transport_modes.find()
     if request.method == 'POST':
         data = request.form
-        payload = {
+        ride_payload = {
+            '_id': str(ObjectId()),
             'from': data['from_location'],
             'to': data['to_location'],
             'description': data['description'],
@@ -75,18 +85,88 @@ def ride():
             'date': data['date'],
             'mode_of_transport': data['mode_of_transport']
         }
-        print(payload)
         mongo.db.users.update_one(
             {'username': session['username']},
-            {'$push':
-                {'rides':payload
-                    }
+            {'$push':{
+                'rides': ride_payload
                 }
+            }
+        )
+        return render_template('ride.html', content = {'transport_modes':transport_modes, 'alert':True})
+    return render_template('ride.html', content = {'transport_modes':transport_modes, 'alert':False})
+
+@app.route("/history", methods=['GET','POST'])
+def history():
+    if not session.get('username'):
+        return redirect(url_for('login'))
+    user = session['username']
+    transport_modes = mongo.db.transport_modes.find()
+    if 'rides' in mongo.db.users.find_one({'username':user}).keys():
+        rides = mongo.db.users.find_one({'username':user})['rides']
+    else:
+        rides = None
+    return render_template('history.html', context={'rides':rides, 'transport_modes':transport_modes})
+
+@app.route("/history/edit/<ride_id>", methods=['GET', 'POST'])
+def edit(ride_id):
+    if not session.get('username'):
+        return redirect(url_for('login'))
+    user = session['username']
+    reqd_ride = mongo.db.users.find_one({
+        'username': user,
+        'rides._id': ride_id
+    })
+    transport_modes = mongo.db.transport_modes.find()
+    if not reqd_ride:
+        alert = True
+        ride = None
+    else:
+        alert = False
+        ride = reqd_ride['rides'][0]
+
+        if request.method == 'POST':
+            data = request.form
+            payload = {
+                '_id': ride_id,
+                'from': data['from_location'],
+                'to': data['to_location'],
+                'description': data['description'],
+                'distance': data['distance'],
+                'date': data['date'],
+                'mode_of_transport': data['mode_of_transport']
+            }
+
+            mongo.db.users.update_one(
+                {'username': user,'rides._id': ride_id },
+                {'$set': {'rides.$': payload}}
             )
-        return render_template('ride.html', content = {'alert':True})
-    return render_template('ride.html', content = {'alert':False})
+
+            return redirect(url_for('history'))
+    return render_template('edit.html', context={'ride': ride, 'alert': alert, 'transport_modes': transport_modes, 'ride_id': ride_id})
+
+
+@app.route("/history/delete/<ride_id>", methods=['GET'])
+def delete(ride_id):
+    if not session.get('username'):
+        return redirect(url_for('login'))
+    user = session['username']
+
+    reqd_ride = mongo.db.users.find_one({
+        'username': user,
+        'rides._id': ride_id
+    })
+
+    if not reqd_ride:
+        return Response('<h1>Ride not found!</h1>')
+    else:
+        mongo.db.users.update_one(
+            { 'username': user },
+            {'$pull': {'rides': {'_id': ride_id}}}
+        )
+    return redirect(url_for('history'))
 
 if __name__ == '__main__':
+    available_mode_of_transport()
     app.run(debug=True)
 
 

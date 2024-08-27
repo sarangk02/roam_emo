@@ -3,24 +3,65 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-
 <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Welcome to ROAM_EMO</h1>
-            <p>ROAM_EMO is a platform where you can share your travel experiences with the world. You can add your
-                journeys, edit your data, and sign out from the platform. If you are new to the platform, you can
-                register
-                yourself and start sharing your travel experiences.</p>
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-md-12 text-center">
+            <img src="static\media\logo.png" alt="User Image" width=150 height=auto class="img-fluid rounded-circle">
+
+            <h1 class="display-4 text-brown">Welcome to <span class="text-light-brown">ROAM_EMO</span></h1>
+            <p class="lead mt-3 text-dark-brown">ROAM_EMO is a platform where you can share your travel experiences with
+                the world. You can add your journeys, edit your data, and sign out from the platform. If you are new to
+                the platform, you can register yourself and start sharing your travel experiences.</p>
         </div>
     </div>
 
-    <div>
-        <h2>Your Profile</h2>
-        <p>Username : {{ session['username'] }}</p>
-        <p>Name : {{ content.name }}</p>
-        <p>Email ID : {{ content.email }}</p>
+    <!-- Profile Section -->
+    <div class="row">
+        <div class="col-md-5 mx-auto">
+            <div class="card bg-light-brown text-white shadow-lg">
+                <div class="card-header bg-dark-brown">
+                    <h3 class="card-title mb-0">Your Profile</h3>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <div class="list-group-item bg-light-brown text-dark-brown">
+                            <strong>Username:</strong> {{ session['username'] }}
+                        </div>
+                        <div class="list-group-item bg-light-brown text-dark-brown">
+                            <strong>Name:</strong> {{ content.name }}
+                        </div>
+                        <div class="list-group-item bg-light-brown text-dark-brown">
+                            <strong>Email ID:</strong> {{ content.email }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+
+<style>
+    .text-brown {
+        color: #6f4e37;
+    }
+
+    .text-dark-brown {
+        color: #4e3b2e;
+    }
+
+    .text-light-brown {
+        color: #d2b08c;
+    }
+
+    .bg-light-brown {
+        background-color: #d2b08c;
+    }
+
+    .bg-dark-brown {
+        background-color: #4e3b2e;
+    }
+</style>
 
 {% endblock %}

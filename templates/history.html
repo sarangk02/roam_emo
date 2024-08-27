@@ -1,0 +1,74 @@
+{% extends "_base.html" %}
+
+{% block title %}
+Rides Data
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>View your previous Rides </h2>
+    <hr>
+    {% if context.rides %}
+    <table class="table table-hover text-center">
+        <thead>
+            <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Distance</th>
+                <th colspan="2">Description</th>
+                <th>Mode of Transport</th>
+                <th>Date</th>
+                <th colspan="2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ride in context.rides %}
+            <tr>
+                <td>{{ ride['from'] }}</td>
+                <td>{{ ride['to'] }}</td>
+                <td>{{ ride['distance'] }}</td>
+                <td colspan="2">{{ ride['description'] }}</td>
+                <td>{{ ride['mode_of_transport'] }}</td>
+                <td>{{ ride['date'] }}</td>
+                <td><a type="button" href="/history/edit/{{ ride['_id'] }}" class="btn btn-outline-warning w-75 text-primary-emphasis">Edit</a></td>
+                <td><button type="button" class="btn btn-outline-danger w-75" data-bs-toggle="modal" data-bs-target="#delmodal-{{ ride['_id'] }}">Delete</button></td>
+            </tr>
+
+            <!-- Delete Modal -->
+            <div class="modal fade" id="delmodal-{{ ride['_id'] }}" tabindex="-1" aria-labelledby="delmodal-{{ ride['_id'] }}-Label"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="delmodal-{{ ride['_id'] }}-Label">Delete Record</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="">
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete this record?</p>
+                                <div>
+                                    <ul>
+                                        <li>From: <b>{{ ride['from'] }}</b></li>
+                                        <li>To: <b>{{ ride['to'] }}</b></li>
+                                        <li>Distance: <b>{{ ride['distance'] }}</b></li>
+                                        <li>Mode of Transport: <b>{{ ride['mode_of_transport'] }}</b></li>
+                                        <li>Date: <b>{{ ride['date'] }}</b></li>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <a type="button" class="btn btn-danger" href="/history/delete/{{ ride['_id'] }}">Delete</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h3>No Rides Found</h3>
+    {% endif %}
+
+</div>
+{% endblock %}
