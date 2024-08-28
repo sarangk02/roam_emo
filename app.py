@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from bson.objectid import ObjectId
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb://localhost:27017/roam_emo"
+app.config["MONGO_URI"] = "mongodb://db:27017/roam_emo"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 mongo = PyMongo(app)
@@ -13,12 +13,10 @@ bcrypt = Bcrypt(app)
 Session(app)
 
 def available_mode_of_transport():
-    if 'transport_modes' in mongo.db.list_collection_names():
-        return
-    modes = ['On Foot','Bicycle','Car (As Passanger)','Car (Self Driven)', 'Bike (As Passanger)','Bike (Self Driven)', 'Bus', 'Train', 'Flight']
-    for mode in modes:
-        mongo.db.transport_modes.insert_one({'mode':mode})
-    return
+    if 'transport_modes' not in mongo.db.list_collection_names():
+        modes = ['On Foot', 'Bicycle', 'Car (As Passenger)', 'Car (Self Driven)','Bike (As Passenger)', 'Bike (Self Driven)', 'Bus', 'Train', 'Flight']
+        mongo.db.transport_modes.insert_many([{'mode': mode} for mode in modes])
+
 
 @app.route("/", methods=['GET'])
 def index():
@@ -167,7 +165,4 @@ def delete(ride_id):
 
 if __name__ == '__main__':
     available_mode_of_transport()
-    app.run(debug=True)
-
-
-# docker run -d -p 27017:27017 -v ~/db:/data/db --name mongodb mongo
+    app.run(debug=False, port=5000, host='0.0.0.0')

@@ -1,0 +1,24 @@
+# Ignore development files and directories
+*.pyc
+__pycache__/
+.venv
+
+# Ignore Docker-related files
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+
+# Ignore logs and temporary files
+logs/
+tmp/
+
+# Ignore database files
+db-data/
+
+# Ignore any other files or directories specific to your project
+flask_session/
+nginx/

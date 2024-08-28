@@ -1,0 +1,30 @@
+# docker compose -p roam_emo up -d
+version: '1.0'
+
+services:
+    db:
+        image: mongo:7.0
+        container_name: mongo_roam_emo
+        restart: unless-stopped
+        expose:
+            - "27017"
+        volumes:
+            - ./db-data:/data/db
+    web:
+        build: .
+        container_name: web_roam_emo
+        command: python app.py
+        expose:
+            - "5000"
+        depends_on:
+            - db
+    nginx:
+        build: ./nginx
+        container_name: nginx_roam_emo
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx/conf.d:/etc/nginx/conf.d
+        depends_on:
+            - db
+            - web
